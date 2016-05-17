@@ -48,7 +48,7 @@ public class WebServer {
          * Resource data of URL
          */
         String[] resource = {};
-        String fileType = "File type: ";
+        String fileType = "";
 
         /**
          * Reads the server response
@@ -105,7 +105,8 @@ public class WebServer {
          * Serve the file. Display the correct file type using the file extension
          * NOTE: THIS WILL BE REPLACED WITH FILE CONTENT
          */
-        output.println(fileType);
+
+//        output.println(fileType);
 
 
         /**
@@ -117,6 +118,14 @@ public class WebServer {
             output.println("HTTP/1.1 404 NOT FOUND");
             output.println("");
         }
+        if(fileType == "html"){
+            output.println("HTTP/1.1 200 OK");
+            output.println("Content-Type: text/html;");
+            output.println("Content-Length: "+ file.length());
+        }
+
+
+
         InputStream fileIn = null;
         try {
             fileIn = new FileInputStream(file); // Can also pass the constructor a String
