@@ -13,34 +13,52 @@ public class MyURL {
      *
      * @param url the {@code String} to parse
      */
-    public MyURL(String url) {
+    public MyURL(String url) throws RuntimeException{
 
         // TODO:  Split the url into scheme, domainName, port, and path.
         // Only the domainName is required.  Default values given above.
         // See the test file for examples of correct and incorrect behavior.
         // Hints:  (1) My implementation is mostly calls to String.indexOf and String.substring.
         // (2) indexOf can take a String as a parameter (it need not be a single character).
-
         /**
          * REMOVE SCHEME
          */
+        if(url.length() <= 4){
+            throw new RuntimeException("NO DOMAIN");
+        }
+
         int startURL = url.indexOf(":");
-        if(url.substring(0, startURL).equals("ssh") || url.substring(0,
-                startURL).equals("ftp")|| url.substring(0,startURL).equals("html")
-                || url.substring(0, startURL).equals("unusual")) {
-            url = url.substring(startURL+3);
+        if (startURL != -1 || (startURL < 10&&startURL>0)) {
+            if (url.substring(0, startURL).equals("ssh") || url.substring(0,
+                    startURL).equals("ftp") || url.substring(0, startURL).equals("http")
+                    || url.substring(0, startURL).equals("https")
+                    || url.substring(0, startURL).equals("unusual")) {
+                scheme = url.substring(0, startURL);
+                url = url.substring(startURL + 3);
+            }
+
+            if(url.charAt(0)==':'){
+                throw new RuntimeException("NO DOMAIN");
+            }
         }
 
         /**
          * FIND DOMAIN
          */
-        int endDomain = url.indexOf('/');
-        System.out.println(endDomain);
-        domainName = url.substring(0, endDomain);
-        if(domainName.contains(":")){
-            port = Integer.parseInt(domainName.substring(domainName.indexOf(':')));
+        int endDomain = url.indexOf("/");
+        if(endDomain != -1) {
+            domainName = url.substring(0, endDomain);
+            if (domainName.contains(":")) {
+                port = Integer.parseInt(domainName.substring(domainName.indexOf(':') + 1));
+                domainName = domainName.substring(0, domainName.indexOf(':'));
+            }
+            path = url.substring(endDomain);
+        }else if (url.contains(":")) {
+            port = Integer.parseInt(url.substring(url.indexOf(':') + 1));
+            domainName = url.substring(0, url.indexOf(':'));
+        }else{
+            domainName = url;
         }
-        path = url.substring(endDomain);
 
     }
 
@@ -60,18 +78,48 @@ public class MyURL {
         // (2) Replace the filename (i.e., the last segment of the path) with the relative link.
         // See the test file for examples of correct and incorrect behavior.
         // Hint:  Consider using String.lastIndexOf
-        int endDomain = newURL.indexOf(":");
-        int lastFile = newURL.lastIndexOf("/");
-        String addFile = newURL.substring(lastFile);
+        /**
+         * REMOVE SCHEME IF IT EXISTS
+         */
+        int startURL = newURL.indexOf(":");
+        if (startURL != -1 || (startURL < 10&&startURL>0)) {
+            if (newURL.substring(0, startURL).equals("ssh") || newURL.substring(0,
+                    startURL).equals("ftp") || newURL.substring(0, startURL).equals("http")
+                    || newURL.substring(0, startURL).equals("https")
+                    || newURL.substring(0, startURL).equals("unusual")) {
+                scheme = newURL.substring(0, startURL);
+                newURL = newURL.substring(startURL + 3);
 
-        int currentFile = currentURL.path.lastIndexOf("/");
-        currentURL.path = currentURL.path.substring(0, currentFile);
-        currentURL.path = currentURL.path+addFile;
+
+            }
+
+            /**
+             * FIND DOMAIN(SAME FIRST CONSTRUCTOR)
+             */
+            int endDomain = newURL.indexOf("/");
+            if(endDomain != -1) {
+                domainName = newURL.substring(0, endDomain);
+                if (domainName.contains(":")) {
+                    port = Integer.parseInt(domainName.substring(domainName.indexOf(':') + 1));
+                    domainName = domainName.substring(0, domainName.indexOf(':'));
+                }
+                path = newURL.substring(endDomain);
+            }else {
+                domainName = newURL;
+            }
+        } else {
+            /**
+             * ASSUME NEWURL IS A RELATIVE FILE PATH TO CURRENTURL
+             */
+            scheme = currentURL.scheme();
+            domainName = currentURL.domainName();
+            port = currentURL.port();
+            int oldFileLocation = currentURL.path().lastIndexOf('/');
+            String oldURL = currentURL.path().substring(0, oldFileLocation+1);
+            path = oldURL + newURL;
 
 
-        domainName = newURL.substring(0, endDomain);
-        MyURL copy = currentURL;
-
+        }
 
 
     }
@@ -100,7 +148,7 @@ public class MyURL {
      */
     public String toString() {
         // TODO:  Format this URL as a string
-        return String.format("");
+        return scheme+"://"+domainName+":"+port+path;
     }
 
     // Needed in order to use MyURL as a key to a HashMap
@@ -123,7 +171,8 @@ public class MyURL {
         }
     }
 
-    public static void main(String[] args){
-        MyURL test = new MyURL("http://www.google.com/place1/place2/george.html");
+    public static void main(String[] args) {
+        MyURL url = new MyURL("http://:98");
+        MyURL url1 = new MyURL("fred/barney/wilma.html", url);
     }
 }
