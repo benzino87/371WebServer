@@ -118,7 +118,7 @@ public class WebServer {
                  */
                 if (fileType.equals("pl")) {
                     output.println("HTTP/1.1 200 OK");
-                    output.println("Content-Type: text/plain");
+                    output.println("Content-Type: text/html");
                     output.println("Content-Length: " + file.length());
                     output.println("");
                 }
