@@ -47,9 +47,10 @@ public class WebServer {
         /**
          * Resource data of URL
          */
-        String[] resource = {};
         String fileType = "";
         String getResource = "";
+        String fileName ="";
+        String queryString = "";
 
         /**
          * Reads the server response
@@ -73,8 +74,12 @@ public class WebServer {
                     }
                 }
                 getResource = getResource.substring(1);
+                fileName = getResource.substring(10);
                 int typeSplit = getResource.indexOf('.');
                 fileType = getResource.substring(typeSplit+1);
+                if(getResource.contains("?")){
+                    queryString = getResource.substring(getResource.charAt('?'));
+                }
 
             }
 
@@ -136,13 +141,20 @@ public class WebServer {
                     }
                 }
 
-                int fileLength = (int) file.length();
+                if(!fileType.equals("pl")) {
+                    int fileLength = (int) file.length();
 
-                fileIn = new FileInputStream(file); // Can also pass the constructor a String
-                byte[] buffer = new byte[fileLength];
-                int amount_read = fileIn.read(buffer); // read up to 1024 bytes of raw data
-                output.write(buffer, 0, amount_read); // write data back out to an OutputStream
+                    fileIn = new FileInputStream(file); // Can also pass the constructor a String
+                    byte[] buffer = new byte[fileLength];
+                    int amount_read = fileIn.read(buffer); // read up to 1024 bytes of raw data
+                    output.write(buffer, 0, amount_read); // write data back out to an OutputStream
 
+                }else{
+                    Perl perl = new Perl();
+                    System.out.println(queryString);
+                    output.print(perl.runPerl(getResource, queryString));
+
+                }
             } finally {
 
                 /**
