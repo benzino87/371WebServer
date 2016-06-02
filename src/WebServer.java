@@ -6,32 +6,32 @@ import java.util.Arrays;
 
 public class WebServer {
 
-//    Steps in completing project:
-//    Complete the in-class assignment:
-//        Create a Server socket, accept a connection, set up the input and output.
-//        Read the "GET" line from the client.
-//        Use a loop to read all the request headers. Print them to the standard output.
-//    Parse the "GET" line (e.g., using String.split.)
-//    Open the requested file.
-//    Print the required response headers (Content-type and Content-length)
-//  (You may base the content-type on the file extension.)
-//    Use a loop to
-//        Read a block of data from the file then
-//        Write the data to the socket
-//    For a text file, you can read and write one line at a time. For a data file
-// (like an image), you will want to use the raw read method to read a block of
-// data (typically a few Kilobytes), then use the corresponding write method to
-// write it to the socket. The read method typically returns the amount of data
-// read, which may be less than your buffer size. You can write a text file this
-// way also (which means you don't need separate code to handle text and data).
-//            Finally, close the socket.
-//  To test your server
-//  Create a folder named "data" in your project,
-//  Put some test files in this folder (e.g., a few .html files, a few .txt
-// files and a few images),
-//    Launch your server on some port (e.g., 8080) from your project directory
-// (i.e., the one that contains data)
-//    Point your web browser to "localhost:8080/data/file1.html"
+    /**
+        Steps in completing project:
+        Complete the in-class assignment:
+            Create a Server socket, accept a connection, set up the input and output.
+            Read the "GET" line from the client.
+            Use a loop to read all the request headers. Print them to the standard output.
+            Parse the "GET" line (e.g., using String.split.)
+            Open the requested file.
+            Print the required response headers (Content-type and Content-length)
+            (You may base the content-type on the file extension.)
+            Use a loop to read a block of data from the file then
+            Write the data to the socket
+           For a text file, you can read and write one line at a time. For a data file
+            (like an image), you will want to use the raw read method to read a block of
+            data (typically a few Kilobytes), then use the corresponding write method to
+            write it to the socket. The read method typically returns the amount of data
+            read, which may be less than your buffer size. You can write a text file this
+            way also (which means you don't need separate code to handle text and data).
+           Finally, close the socket to test your server
+            Create a folder named "data" in your project,
+            Put some test files in this folder (e.g., a few .html files, a few .txt
+            files and a few images),
+            Launch your server on some port (e.g., 8080) from your project directory
+            (i.e., the one that contains data)
+            Point your web browser to "localhost:8080/data/file1.html"
+     */
 
     public static void handleConnection(Socket socket) throws IOException {
 
@@ -79,6 +79,7 @@ public class WebServer {
                 fileType = getResource.substring(typeSplit+1);
                 if(getResource.contains("?")){
                     queryString = getResource.substring(getResource.charAt('?'));
+                    fileType = fileType.substring(0, fileType.charAt('?'));
                 }
 
             }
